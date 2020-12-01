@@ -1,0 +1,37 @@
+{
+  "name": "the-game1",
+  "version": "1.0.0",
+  "description": "The first game",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack-dev-server --port 8080"
+  },
+  "author": "Georgy Dolganov",
+  "license": "ISC",
+  "devDependencies": {
+    "@babylonjs/core": "^4.1.0",
+    "@babylonjs/gui": "^4.1.0",
+    "@babylonjs/inspector": "^4.1.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "file-loader": "^6.1.1",
+    "html-webpack-plugin": "^4.5.0",
+    "sass": "^1.29.0",
+    "sass-loader": "^10.0.5",
+    "node-sass": "^4.0.0",
+    "ts-loader": "^8.0.4",
+    "typescript": "^4.0.3",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "dependencies": {
+    "@reactivex/rxjs": "^6.6.3",
+    "ammo.js": "github:kripken/ammo.js",
+    "cannon": "^0.6.2",
+    "css-loader": "^5.0.1",
+    "oimophysics": "^1.2.2",
+    "rxjs": "^6.6.3",
+    "style-loader": "^2.0.0"
+  }
+}

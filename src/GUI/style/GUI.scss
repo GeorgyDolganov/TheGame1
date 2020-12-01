@@ -1,0 +1,71 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;600;700;800;900&family=Roboto&family=Source+Sans+Pro:wght@200;300;400;600;700;900&display=swap");
+
+$white: #fff;
+$black: #000;
+
+body {
+  overflow: hidden;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+h2,
+h3 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 900;
+  color: $white;
+}
+
+p {
+  font-family: "Source Sans Pro", sans-serif;
+}
+
+.dialoge {
+  background-color: $black;
+  height: 300px;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  .border {
+    height: calc(100% - 62px);
+    margin: 10px;
+    border: 2px white dotted;
+    padding: 20px;
+    display: flex;
+    .character {
+      margin-right: 48px;
+      .avatar {
+        .img {
+          image-rendering: pixelated;
+          background-size: cover;
+          width: 255px;
+          height: 190px;
+          margin-bottom: 20px;
+        }
+      }
+      h2 {
+        text-align: center;
+      }
+    }
+    .text {
+      font-size: 24px;
+      display: flex;
+      margin-top: -35px;
+      color: #fff;
+      p{
+        margin: auto;
+      }
+    }
+  }
+  .tip{
+    position: absolute;
+    color: white;
+    bottom: 30px;
+    right: 30px;
+    font-family: 'Montserrat';
+    font-weight: 900;
+  }
+}
