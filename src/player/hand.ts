@@ -1,5 +1,5 @@
 import { Mesh, MeshBuilder, StandardMaterial, Texture } from "@babylonjs/core";
-import handTexture from "../assets/textures/selfmade/hand.png";
+import handTexture from "../../assets/textures/selfmade/hand.png";
 export default class Hand {
   public mesh: Mesh;
   private material: StandardMaterial;

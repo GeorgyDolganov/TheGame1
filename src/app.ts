@@ -2,15 +2,6 @@ import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
 import {
-  AdvancedDynamicTexture,
-  Button,
-  StackPanel,
-  TextBlock,
-  Rectangle,
-  Control,
-  Image
-} from "@babylonjs/gui";
-import {
   Engine,
   Scene,
   UniversalCamera,
@@ -28,17 +19,15 @@ import {
   Texture,
   AssetsManager,
   SpritePackedManager,
-  Ray,
-  RayHelper
+  Ray
 } from "@babylonjs/core";
 import oimo from "oimophysics";
 import { fromEvent } from 'rxjs';
 (global as any).OIMO = require("oimophysics");
 
-import multiplyQuaternionByVector from "./utils/multiplyQuaternionByVector";
+import player from "./player";
 
-import tilesetPNG from "../assets/tilesets/tileset.png";
-import tilesetJSON from "../assets/tilesets/tileset.json";
+import multiplyQuaternionByVector from "./utils/multiplyQuaternionByVector";
 
 import CobleDiff from "../assets/textures/cobblestone/cobblestone_diff.jpg";
 import CobleBump from "../assets/textures/cobblestone/cobblestone_Bump.jpg";
@@ -56,21 +45,17 @@ import floor from "../assets/textures/dungeonset/floor.png";
 import monster1 from "../assets/textures/dungeonset/monster1.png";
 import wall1 from "../assets/textures/dungeonset/wall1.png";
 
-import hand from "../assets/textures/selfmade/hand.png";
-
 import "./GUI/style/GUI.scss";
+import Player from "./player";
 
-enum State {
-  START,
-  GAME,
-  LOSE,
-  CUTSCENE
-}
 class App {
   camera: UniversalCamera;
   canvas: HTMLCanvasElement;
   engine: Engine;
   scene: Scene;
+
+  player1: Player;
+
   GUI: {
     container: HTMLDivElement;
     dialoge: HTMLDivElement;
@@ -107,9 +92,6 @@ class App {
       floor: Texture;
       monster1: Texture;
       wall1: Texture;
-    },
-    selfmade: {
-      hand: Texture;
     }
   };
 
@@ -122,7 +104,6 @@ class App {
     sprites: {
       guy: StandardMaterial;
       monster: StandardMaterial;
-      hand: StandardMaterial;
     },
   };
   ground: Mesh;
@@ -158,7 +139,7 @@ class App {
     this._createMeshes();
 
     this._createSprites();
-    this._createHand();
+    this.player1 = new Player(this.scene, this.camera);
 
     this._createGUI();
     this._createDialogeGUI();
@@ -255,15 +236,6 @@ class App {
           Texture.NEAREST_SAMPLINGMODE
         )
       },
-      selfmade: {
-        hand: new Texture(
-          hand,
-          this.scene,
-          false,
-          true,
-          Texture.NEAREST_SAMPLINGMODE
-        )
-      }
     };
 
     this.textures.dungeonset.wall1.uScale = 12.5;
@@ -320,8 +292,7 @@ class App {
       },
       sprites: {
         guy: new StandardMaterial("guyTexture", this.scene),
-        monster: new StandardMaterial("monsterTexture", this.scene),
-        hand: new StandardMaterial("handTexture", this.scene)
+        monster: new StandardMaterial("monsterTexture", this.scene)
       }
     };
 
@@ -337,8 +308,6 @@ class App {
     this.materials.sprites.guy.diffuseTexture.hasAlpha = true;
     this.materials.sprites.monster.diffuseTexture = this.textures.dungeonset.monster1;
     this.materials.sprites.monster.diffuseTexture.hasAlpha = true;
-    this.materials.sprites.hand.diffuseTexture = this.textures.selfmade.hand;
-    this.materials.sprites.hand.diffuseTexture.hasAlpha = true;
   }
 
   private _createGround() {
@@ -431,15 +400,6 @@ class App {
     this.monster.position.z = -200;
     this.monster.material = this.materials.sprites.monster;
     this.monster.isPickable = false;
-  }
-
-  private _createHand() {
-    this.hand = MeshBuilder.CreatePlane("hand", { size: 30 }, this.scene);
-    this.hand.position.set(1.9,-1,3);
-    this.hand.scaling.set(0.05,0.05,0.05);
-    this.hand.material = this.materials.sprites.hand;
-    this.hand.isPickable = false;
-    this.hand.parent = this.camera;
   }
 
   private _createMeshes() {
@@ -759,13 +719,6 @@ class App {
     this.scene.registerBeforeRender(() => {
       tryToTalk();
     });
-
-    fromEvent(window, 'keypress').subscribe((ev)=>{
-      ev.
-      if(ev.key == "e" || ev.key == "E" || ev.key == "У" || ev.key == "у") {
-
-      }
-    })
     
     window.addEventListener("keypress", ev => {
       if (ev.key == "e" || ev.key == "E" || ev.key == "У" || ev.key == "у") {
