@@ -1,4 +1,4 @@
-import { Mesh, MeshBuilder, StandardMaterial, Texture } from "@babylonjs/core";
+import { Mesh, MeshBuilder, StandardMaterial, Texture, Color3 } from "@babylonjs/core";
 import handTexture from "../../assets/textures/selfmade/hand.png";
 export default class Hand {
   public mesh: Mesh;
@@ -19,6 +19,8 @@ export default class Hand {
     this.material = new StandardMaterial("hand", scene);
     this.material.diffuseTexture = this.texture;
     this.material.diffuseTexture.hasAlpha = true;
+    this.material.emissiveColor = new Color3(1,1,1);
+    this.material.disableLighting = true;
   }
 
   private _createMesh(scene, camera) {
@@ -28,5 +30,6 @@ export default class Hand {
     this.mesh.material = this.material;
     this.mesh.isPickable = false;
     this.mesh.parent = camera;
+    this.mesh.renderingGroupId = 2;
   }
 }

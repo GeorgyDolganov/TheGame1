@@ -26,24 +26,11 @@ import { fromEvent } from 'rxjs';
 (global as any).OIMO = require("oimophysics");
 
 import player from "./player";
+import createMaterials from "./materials";
 
 import multiplyQuaternionByVector from "./utils/multiplyQuaternionByVector";
 
-import CobleDiff from "../assets/textures/cobblestone/cobblestone_diff.jpg";
-import CobleBump from "../assets/textures/cobblestone/cobblestone_Bump.jpg";
-import CobleNor from "../assets/textures/cobblestone/cobblestone_Nor.jpg";
-import CobleSpec from "../assets/textures/cobblestone/cobblestone_Spec.jpg";
-
-import BlockDiff from "../assets/textures/blockwall/blockwall_diff.jpg";
-import BlockNor from "../assets/textures/blockwall/blockwall_Nor.jpg";
-import BlockAO from "../assets/textures/blockwall/blockwall_ao.jpg";
-
 import char1 from "../assets/textures/dungeonset/char1.png";
-import floorBig from "../assets/textures/dungeonset/floor-big.png";
-import floorBig1 from "../assets/textures/dungeonset/floor-big1.png";
-import floor from "../assets/textures/dungeonset/floor.png";
-import monster1 from "../assets/textures/dungeonset/monster1.png";
-import wall1 from "../assets/textures/dungeonset/wall1.png";
 
 import "./GUI/style/GUI.scss";
 import Player from "./player";
@@ -55,6 +42,8 @@ class App {
   scene: Scene;
 
   player1: Player;
+
+  materials: any;
 
   GUI: {
     container: HTMLDivElement;
@@ -73,39 +62,6 @@ class App {
     talkingTo: string;
   };
 
-  textures: {
-    cobblestone: {
-      diff: Texture;
-      buff: Texture;
-      spec: Texture;
-      norm: Texture;
-    },
-    blockwall: {
-      diff: Texture;
-      norm: Texture;
-      ao: Texture;
-    },
-    dungeonset: {
-      char1: Texture;
-      floorBig: Texture;
-      floorBig1: Texture;
-      floor: Texture;
-      monster1: Texture;
-      wall1: Texture;
-    }
-  };
-
-  materials: {
-    enviroment: {
-      red: StandardMaterial;
-      ground: StandardMaterial;
-      wall: StandardMaterial;
-    },
-    sprites: {
-      guy: StandardMaterial;
-      monster: StandardMaterial;
-    },
-  };
   ground: Mesh;
   softSphere: Mesh;
   roof: Mesh;
@@ -131,7 +87,6 @@ class App {
 
     this._createLights();
     this._createShadows();
-    this._createMaterial();
 
     this._createGround();
     this._createBox();
@@ -139,13 +94,12 @@ class App {
     this._createMeshes();
 
     this._createSprites();
-    this.player1 = new Player(this.scene, this.camera);
+    this.player1 = new Player(this.canvas, this.scene, this.camera);
 
     this._createGUI();
     this._createDialogeGUI();
 
-    this._addFirstPersonControls();
-    this._addPickingUpControls();
+    //this._addPickingUpControls();
 
     this._createPhysics();
 
@@ -174,84 +128,7 @@ class App {
   }
 
   private _loadAssets() {
-    this.textures = {
-      cobblestone: {
-        diff: new Texture(CobleDiff, this.scene),
-        buff: new Texture(CobleBump, this.scene),
-        spec: new Texture(CobleSpec, this.scene),
-        norm: new Texture(CobleNor, this.scene)
-      },
-      blockwall: {
-        diff: new Texture(
-          BlockDiff,
-          this.scene,
-          false,
-          false,
-          Texture.NEAREST_SAMPLINGMODE
-        ),
-        norm: new Texture(BlockNor, this.scene),
-        ao: new Texture(BlockAO, this.scene)
-      },
-      dungeonset: {
-        char1: new Texture(
-          char1,
-          this.scene,
-          false,
-          true,
-          Texture.NEAREST_SAMPLINGMODE
-        ),
-        floorBig: new Texture(
-          floorBig,
-          this.scene,
-          false,
-          true,
-          Texture.NEAREST_SAMPLINGMODE
-        ),
-        floorBig1: new Texture(
-          floorBig1,
-          this.scene,
-          false,
-          true,
-          Texture.NEAREST_SAMPLINGMODE
-        ),
-        floor: new Texture(
-          floor,
-          this.scene,
-          false,
-          true,
-          Texture.NEAREST_SAMPLINGMODE
-        ),
-        monster1: new Texture(
-          monster1,
-          this.scene,
-          false,
-          true,
-          Texture.NEAREST_SAMPLINGMODE
-        ),
-        wall1: new Texture(
-          wall1,
-          this.scene,
-          false,
-          true,
-          Texture.NEAREST_SAMPLINGMODE
-        )
-      },
-    };
-
-    this.textures.dungeonset.wall1.uScale = 12.5;
-    this.textures.dungeonset.wall1.vScale = 1.25;
-
-    this.textures.cobblestone.diff.uScale = 1000;
-    this.textures.cobblestone.diff.vScale = 1000;
-    this.textures.cobblestone.spec.uScale = 1000;
-    this.textures.cobblestone.spec.vScale = 1000;
-    this.textures.cobblestone.norm.uScale = 1000;
-    this.textures.cobblestone.norm.vScale = 1000;
-
-    this.textures.blockwall.diff.uScale = 40;
-    this.textures.blockwall.diff.vScale = 4;
-    this.textures.blockwall.norm.uScale = 40;
-    this.textures.blockwall.norm.vScale = 4;
+    this.materials = createMaterials(this.scene); 
   }
 
   private _createCamera() {
@@ -281,33 +158,6 @@ class App {
 
   private _createShadows() {
     this.shadowGenerator = new ShadowGenerator(2048, this.light1);
-  }
-
-  private _createMaterial() {
-    this.materials = {
-      enviroment: {
-        red: new StandardMaterial("redMat", this.scene),
-        wall: new StandardMaterial("wallMat", this.scene),
-        ground: new StandardMaterial("groundMat", this.scene)
-      },
-      sprites: {
-        guy: new StandardMaterial("guyTexture", this.scene),
-        monster: new StandardMaterial("monsterTexture", this.scene)
-      }
-    };
-
-    this.materials.enviroment.red.emissiveColor = new Color3(1, 0, 0);
-
-    this.materials.enviroment.wall.diffuseTexture = this.textures.dungeonset.wall1;
-
-    this.materials.enviroment.ground.diffuseTexture = this.textures.dungeonset.floor;
-    this.materials.enviroment.ground.bumpTexture = this.textures.cobblestone.norm;
-    this.materials.enviroment.ground.specularTexture = this.textures.cobblestone.spec;
-
-    this.materials.sprites.guy.diffuseTexture = this.textures.dungeonset.char1;
-    this.materials.sprites.guy.diffuseTexture.hasAlpha = true;
-    this.materials.sprites.monster.diffuseTexture = this.textures.dungeonset.monster1;
-    this.materials.sprites.monster.diffuseTexture.hasAlpha = true;
   }
 
   private _createGround() {
@@ -404,7 +254,7 @@ class App {
 
   private _createMeshes() {
     this.softSphere = MeshBuilder.CreateSphere(
-      "softSphere",
+      "obj-softSphere",
       { diameter: 10, segments: 38, updatable: true },
       this.scene
     );
@@ -534,160 +384,6 @@ class App {
 
   public _closeDialoge() {
     this.GUI.dialoge.style.display = "none";
-  }
-
-  private _addFirstPersonControls() {
-    this.camera.keysUp.push(87); // "w"
-    this.camera.keysDown.push(83); // "s"
-    this.camera.keysLeft.push(65); // "a"
-    this.camera.keysRight.push(68); // "d"
-    this.camera.angularSensibility = 5000;
-
-    window.addEventListener("keydown", ev => {
-      if (ev.shiftKey && ev.ctrlKey && ev.altKey && ev.keyCode === 73) {
-        if (this.scene.debugLayer.isVisible()) {
-          this.scene.debugLayer.hide();
-        } else {
-          this.scene.debugLayer.show();
-        }
-      }
-      //spacebar
-      if (ev.keyCode == 32) {
-        let projectile = MeshBuilder.CreateSphere(
-          "projectile",
-          { diameter: 1 },
-          this.scene
-        );
-        projectile.physicsImpostor = new PhysicsImpostor(
-          projectile,
-          PhysicsImpostor.SphereImpostor,
-          { mass: 50, restitution: 0 },
-          this.scene
-        );
-        projectile.position = this.camera.position;
-        console.log(this.camera.position);
-        let forceDirection = this.camera
-          .getTarget()
-          .subtract(this.camera.position);
-        let forceMagnitude = 100;
-        let contactLocalRefPoint = Vector3.Zero();
-        projectile.physicsImpostor.applyImpulse(
-          forceDirection.scale(forceMagnitude),
-          projectile.getAbsolutePosition().add(contactLocalRefPoint)
-        );
-      }
-    });
-
-    let isLocked = false;
-    this.scene.onPointerDown = () => {
-      if (!isLocked) {
-        this.canvas.requestPointerLock =
-          this.canvas.requestPointerLock ||
-          this.canvas.msRequestPointerLock ||
-          this.canvas.mozRequestPointerLock ||
-          this.canvas.webkitRequestPointerLock;
-        if (this.canvas.requestPointerLock) {
-          this.canvas.requestPointerLock();
-        }
-      }
-    };
-    var pointerLockChange = () => {
-      var controlEnabled = document.pointerLockElement || false;
-
-      if (!controlEnabled) {
-        this.camera.detachControl(this.canvas);
-        isLocked = false;
-      } else {
-        this.camera.attachControl(this.canvas);
-        isLocked = true;
-      }
-    };
-
-    window.addEventListener("pointerlockchange", pointerLockChange, false);
-    window.addEventListener("mspointerlockchange", pointerLockChange, false);
-    window.addEventListener("mozpointerlockchange", pointerLockChange, false);
-    window.addEventListener(
-      "webkitpointerlockchange",
-      pointerLockChange,
-      false
-    );
-  }
-
-  private _startHolding(mesh) {
-    mesh.physicsImpostor.setParam("mass", 0);
-  }
-
-  private _endHolding(mesh) {
-    mesh.physicsImpostor.setParam("mass", 10);
-  }
-
-  private _addPickingUpControls() {
-
-    let tryToGrab = () => {
-      let origin = this.camera.position;
-      let forward = this.camera.getFrontPosition(1);
-      let direction = forward.subtract(origin);
-      direction = Vector3.Normalize(direction);
-      let length = 50;
-
-      let ray = new Ray(origin, direction, length);
-
-      let hit = this.scene.pickWithRay(ray);
-
-      if (hit.pickedMesh && hit.pickedMesh.name.includes("obj")) {
-        this.targetFPC = hit.pickedMesh.name;
-      } else {
-        this.targetFPC = "";
-      }
-
-      let distanceFromCamera = 25;
-
-      if (this.player.holdingObject != "") {
-        let pickedUpMesh = this.scene.getMeshByName(this.player.holdingObject);
-        //Clone of the camera's quaternion
-        var cameraQuaternion = this.camera.rotationQuaternion.clone();
-        //Vector3 (Z-axis/direction)
-        var directionVector = new Vector3(0, 0, distanceFromCamera);
-        //Quaternion/Vector3 multiplication. Function shamelessly stolen from CannonJS's Quaternion class
-        var rotationVector = multiplyQuaternionByVector(
-          cameraQuaternion,
-          directionVector
-        );
-        //New position based on camera position and direction vector
-        console.log(this.camera.position);
-        console.log(pickedUpMesh);
-        console.log(this.player.holdingObject);
-        pickedUpMesh.position.set(
-          this.camera.position.x + rotationVector.x,
-          this.camera.position.y + rotationVector.y,
-          this.camera.position.z + rotationVector.z
-        );
-      }
-    };
-
-    this.scene.registerBeforeRender(() => {
-      tryToGrab();
-    });
-
-    window.addEventListener("keypress", ev => {
-      console.log(ev.key);
-      if (ev.key == "e" || ev.key == "E" || ev.key == "У" || ev.key == "у") {
-        if (this.targetFPC != "" && this.player.holdingObject == "" && this.scene.getMeshByName(this.targetFPC).isPickable == true) {
-          this.player.holdingObject = this.targetFPC;
-          this._startHolding(
-            this.scene.getMeshByName(this.player.holdingObject)
-          );
-        } else if (this.player.holdingObject != "") {
-          this._endHolding(this.scene.getMeshByName(this.player.holdingObject));
-          this.player.holdingObject = "";
-        }
-      }
-    });
-    window.addEventListener("click", ev => {
-      if (this.player.holdingObject != "") {
-        console.log("THROW");
-      }
-    });
   }
 
   private _addDialogeControls() {
