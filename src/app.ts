@@ -325,7 +325,7 @@ class App {
     var playerImpulse = 100;
 
     this.camera.onCollide = mesh => {
-      if (mesh.name == "softSphere") {
+      if (mesh.name == "obj-softSphere") {
         //we can check if mesh is in pushable collection later
         var givenVelocity = playerImpulse / mesh.physicsImpostor.mass;
         var movementDirectionVector = this.camera.position
