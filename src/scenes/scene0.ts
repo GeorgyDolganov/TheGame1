@@ -26,8 +26,8 @@ export default class Scene0 {
 	roof: Mesh;
 	wall1: Mesh;
 	wall2: Mesh;
-	wall3: any;
-	wall4: any;
+	wall3: Mesh;
+	wall4: Mesh;
 	guy: Mesh;
 	monster: Mesh;
 	softSphere: Mesh;
@@ -37,6 +37,16 @@ export default class Scene0 {
     this.scene.collisionsEnabled = true;
     this.scene.ambientColor = new Color3(1, 1, 1);
     this.scene.gravity = new Vector3(0, -10, 0);
+
+    this._loadAssets();
+    this._createLights();
+    this._createShadows();
+    this._createCamera(canvas);
+    this._createMeshes();
+    this._createSprites();
+    this._addPhysics();
+    this._renderLoop(engine);
+
   }
 
   private _loadAssets() {
@@ -51,7 +61,7 @@ export default class Scene0 {
   private _createShadows() {
     this.shadowGenerator = new ShadowGenerator(2048, this.light1);
   }
-
+  
   private _createCamera(canvas) {
     this.camera = new UniversalCamera(
       "PlayerCamera",
@@ -62,7 +72,7 @@ export default class Scene0 {
     this.camera.attachControl(canvas, true);
     this.camera.rotationQuaternion = new Quaternion();
     this.camera.checkCollisions = true;
-    this.camera.position.y = 10;
+    this.camera.position.y = 22;
     this.camera.inertia = 0.4;
     this.camera.angularSensibility = 4000;
     this.camera.speed = 15;
@@ -73,44 +83,61 @@ export default class Scene0 {
   }
 
   private _createMeshes() {
-
     this.ground = MeshBuilder.CreateBox(
       "ground",
       { width: 10000, depth: 10000, height: 2 },
       this.scene
-		);
-		this.ground.material = this.materials.enviroment.ground;
+    );
+    this.ground.position.y = -10;
+    this.ground.material = this.materials.enviroment.ground;
     this.ground.checkCollisions = true;
-		this.ground.isPickable = false;
-		
-		this.roof = MeshBuilder.CreateBox(
+    this.ground.isPickable = false;
+
+    this.roof = MeshBuilder.CreateBox(
       "roof",
       { width: 10000, depth: 10000, height: 2 },
       this.scene
     );
+    this.roof.position.y = 60;
     this.roof.isPickable = false;
-		this.roof.material = this.materials.enviroment.ground;
-		
-		this.wall1 = MeshBuilder.CreateBox(
+    this.roof.material = this.materials.enviroment.ground;
+
+    this.wall1 = MeshBuilder.CreateBox(
       "wall1",
       { width: 1000, height: 100 },
       this.scene
     );
     this.wall1.checkCollisions = true;
+    this.wall1.rotation.y = 0;
+    this.wall1.position.z = 200;
+    this.wall1.position.y = 10;
     this.wall1.isPickable = false;
-		this.wall1.material = this.materials.enviroment.wall;
-		
-		this.wall2 = MeshBuilder.CreateBox(
+    this.wall1.material = this.materials.enviroment.wall;
+
+    this.wall2 = MeshBuilder.CreateBox(
       "wall2",
       { width: 1000, height: 100 },
       this.scene
     );
     this.wall2.checkCollisions = true;
+    this.wall2.rotation.y = 0;
+    this.wall2.position.z = -300;
+    this.wall2.position.y = 10;
     this.wall2.isPickable = false;
-		this.wall2.material = this.materials.enviroment.wall;
-		
-		this.wall3.rotationQuaternion = Quaternion.RotationAxis(Axis.Y, 1.57);
+    this.wall2.material = this.materials.enviroment.wall;
+
+    this.wall3 = MeshBuilder.CreateBox(
+      "wall3",
+      { width: 1000, height: 100 },
+      this.scene
+    );
+
+    this.wall3.rotationQuaternion = Quaternion.RotationAxis(Axis.Y, 1.57);
     this.wall3.checkCollisions = true;
+    this.wall3.rotation.y = 180;
+    this.wall3.position.z = -100;
+    this.wall3.position.x = -300;
+    this.wall3.position.y = 10;
     this.wall3.isPickable = false;
     this.wall3.material = this.materials.enviroment.wall;
 
@@ -122,10 +149,13 @@ export default class Scene0 {
 
     this.wall4.rotationQuaternion = Quaternion.RotationAxis(Axis.Y, 1.57);
     this.wall4.checkCollisions = true;
+    this.wall4.position.z = -100;
+    this.wall4.position.x = 300;
+    this.wall4.position.y = 10;
     this.wall4.isPickable = false;
-		this.wall4.material = this.materials.enviroment.wall;
+    this.wall4.material = this.materials.enviroment.wall;
 
-		this.softSphere = MeshBuilder.CreateSphere(
+    this.softSphere = MeshBuilder.CreateSphere(
       "obj-softSphere",
       { diameter: 10, segments: 38, updatable: true },
       this.scene
@@ -140,10 +170,16 @@ export default class Scene0 {
 
   private _createSprites() {
 		this.guy = MeshBuilder.CreatePlane("guy", { size: 30 }, this.scene);
+    this.guy.position.y = 7;
+    this.guy.rotation.x = Math.PI;
+    this.guy.position.z = -150;
     this.guy.material = this.materials.sprites.guy;
     this.guy.isPickable = false;
 
     this.monster = MeshBuilder.CreatePlane("monster", { size: 50 }, this.scene);
+    this.monster.position.y = 20;
+    this.monster.rotation.x = Math.PI;
+    this.monster.position.z = -200;
     this.monster.material = this.materials.sprites.monster;
     this.monster.isPickable = false;
 	}
@@ -218,32 +254,6 @@ export default class Scene0 {
         );
       }
     };
-	}
-
-	private _designScene() {
-		this.ground.position.y = -10;
-
-		this.roof.position.y = 60;
-
-		this.wall1.rotation.y = 0;
-		this.wall1.position.set(0,10,200);
-		
-		this.wall2.rotation.y = 0;
-		this.wall2.position.set(0,10,-300);
-		
-		this.wall3.rotation.y = 180;
-		this.wall3.position.set(-300,10,-100);
-		
-		this.wall4.position.set(300,10,-100);
-
-		this.guy.rotation.x = Math.PI;
-		this.guy.position.set(0,7,-150);
-
-		
-    this.monster.rotation.x = Math.PI;
-		this.monster.position.set(0,20,-200);
-
-		this.softSphere.position.set(0,30,-100);
 	}
 
 	private _renderLoop(engine) {
