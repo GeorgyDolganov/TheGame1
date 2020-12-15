@@ -14,6 +14,8 @@ import {
 } from "@babylonjs/core";
 import oimo from "oimophysics";
 import createMaterials from "../materials";
+import Ramy from "../characters/Ramy";
+import Monster from "../characters/Monster";
 
 export default class Scene0 {
   public scene: Scene;
@@ -28,11 +30,13 @@ export default class Scene0 {
 	wall2: Mesh;
 	wall3: Mesh;
 	wall4: Mesh;
-	guy: Mesh;
+	Ramy: Ramy;
 	monster: Mesh;
 	softSphere: Mesh;
+  Monster: Monster;
 
   constructor(engine, canvas) {
+
     this.scene = new Scene(engine);
     this.scene.collisionsEnabled = true;
     this.scene.ambientColor = new Color3(1, 1, 1);
@@ -43,7 +47,7 @@ export default class Scene0 {
     this._createShadows();
     this._createCamera(canvas);
     this._createMeshes();
-    this._createSprites();
+    this._createSprites(engine);
     this._addPhysics();
     this._renderLoop(engine);
 
@@ -168,20 +172,10 @@ export default class Scene0 {
     this.shadowGenerator.getShadowMap().renderList.push(this.softSphere);
   }
 
-  private _createSprites() {
-		this.guy = MeshBuilder.CreatePlane("guy", { size: 30 }, this.scene);
-    this.guy.position.y = 7;
-    this.guy.rotation.x = Math.PI;
-    this.guy.position.z = -150;
-    this.guy.material = this.materials.sprites.guy;
-    this.guy.isPickable = false;
+  private _createSprites(engine) {
+    this.Ramy = new Ramy(engine, this.scene, this.camera,this.materials);
+    this.Monster = new Monster(engine, this.scene, this.camera,this.materials);
 
-    this.monster = MeshBuilder.CreatePlane("monster", { size: 50 }, this.scene);
-    this.monster.position.y = 20;
-    this.monster.rotation.x = Math.PI;
-    this.monster.position.z = -200;
-    this.monster.material = this.materials.sprites.monster;
-    this.monster.isPickable = false;
 	}
 
 	private _addPhysics(){
@@ -258,8 +252,6 @@ export default class Scene0 {
 
 	private _renderLoop(engine) {
     engine.runRenderLoop(() => {
-      this.guy.lookAt(this.camera.position, Math.PI);
-      this.monster.lookAt(this.camera.position, Math.PI);
       this.scene.render();
     });
   }
