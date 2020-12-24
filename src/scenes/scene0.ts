@@ -29,12 +29,10 @@ export default class Scene0 {
 	wall1: Mesh;
 	wall2: Mesh;
 	wall3: Mesh;
-	wall4: Mesh;
-	Ramy: Ramy;
-	monster: Mesh;
-	softSphere: Mesh;
-  Monster: Monster;
-
+  wall4: Mesh;
+  softSphere: Mesh;
+  
+  characters: object;
   constructor(engine, canvas) {
 
     this.scene = new Scene(engine);
@@ -46,8 +44,8 @@ export default class Scene0 {
     this._createLights();
     this._createShadows();
     this._createCamera(canvas);
-    this._createMeshes();
-    this._createSprites(engine);
+    this._addMeshes();
+    this._addCharacters(engine);
     this._addPhysics();
     this._renderLoop(engine);
 
@@ -86,7 +84,7 @@ export default class Scene0 {
     this.scene.activeCamera = this.camera;
   }
 
-  private _createMeshes() {
+  private _addMeshes() {
     this.ground = MeshBuilder.CreateBox(
       "ground",
       { width: 10000, depth: 10000, height: 2 },
@@ -172,10 +170,12 @@ export default class Scene0 {
     this.shadowGenerator.getShadowMap().renderList.push(this.softSphere);
   }
 
-  private _createSprites(engine) {
-    this.Ramy = new Ramy(engine, this.scene, this.camera,this.materials);
-    this.Monster = new Monster(engine, this.scene, this.camera,this.materials);
-
+  private _addCharacters(engine) {
+    this.characters = {
+      char_Ramy: new Ramy({engine:engine, scene:this.scene, camera:this.camera,materials:this.materials}),
+      char_Monster: new Monster({engine:engine, scene:this.scene, camera:this.camera,materials:this.materials})
+    }
+    
 	}
 
 	private _addPhysics(){

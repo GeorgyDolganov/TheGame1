@@ -1,6 +1,5 @@
 import { Ray, Vector3 } from "@babylonjs/core";
 import multiplyQuaternionByVector from "../utils/multiplyQuaternionByVector";
-import char1 from "../../assets/textures/dungeonset/char1.png";
 
 export function addFirstPersonControls(canvas, scene, camera) {
   camera.keysUp.push(87); // "w"
@@ -59,7 +58,6 @@ export function addPickingUpControls(scene, camera, player) {
   var targetFPC = "";
 
   let tryToGrab = () => {
-    console.log("try");
     let origin = camera.position;
     let forward = camera.getFrontPosition(1);
     let direction = forward.subtract(origin);
@@ -90,9 +88,6 @@ export function addPickingUpControls(scene, camera, player) {
         directionVector
       );
       //New position based on camera position and direction vector
-      console.log(camera.position);
-      console.log(pickedUpMesh);
-      console.log(player.holdingObject);
       pickedUpMesh.position.set(
         camera.position.x + rotationVector.x,
         camera.position.y + rotationVector.y,
@@ -133,93 +128,51 @@ export function addPickingUpControls(scene, camera, player) {
   //return targetFPC;
 }
 
-export function createGUI() {
-  this.GUI = {
-    container: document.createElement("div"),
-    interact: document.createElement("div"),
-    dialoge: document.createElement("div")
-  };
-  this.GUI.container.setAttribute("id", "GUI");
-  this.GUI.container.classList.add("GUI");
-  document.body.appendChild(this.GUI.container);
-  document.getElementById("GUI").appendChild(this.GUI.dialoge);
-  document.getElementById("GUI").appendChild(this.GUI.interact);
-}
-
-export function createDialogeGUI() {
-  this.GUI.dialoge.innerHTML = ``;
-  this.GUI.dialoge.setAttribute("id", "dialoge");
-  this.GUI.dialoge.classList.add("dialoge");
-  this.GUI.dialoge.style.display = "none";
-}
-
-export function createInteractGUI() {
-  this.GUI.interact.innerHTML = ``;
-  this.GUI.interact.setAttribute("id", "interact");
-  this.GUI.interact.classList.add("interact");
-  this.GUI.interact.style.display = "none";
-}
-
-export function openDialoge(name, img, text) {
-  this.GUI.dialoge.innerHTML = `
-    <div class="border">
-      <div class="character">
-        <div class="avatar">
-          <div class="img" style="background-image: url('${img}')"></div>
-        </div>
-        <h2>${name}</h2>
-      </div>
-      <div class="text">
-        <p>${text}</p>
-      </div>  
-    </div>
-    <div class="tip">PRESS E TO CLOSE</div>`;
-  this.GUI.dialoge.style.display = "flex";
-}
-
-export function closeDialoge() {
-  this.GUI.dialoge.style.display = "none";
-}
-
-export function addDialogeControls() {
-  let tryToTalk = () => {
-    let origin = this.camera.position;
-    let forward = this.camera.getFrontPosition(1);
-    let direction = forward.subtract(origin);
-    direction = Vector3.Normalize(direction);
-    let length = 50;
-
-    let ray = new Ray(origin, direction, length);
-
-    let hit = this.scene.pickWithRay(ray);
-
-    if (hit.pickedMesh && hit.pickedMesh.name.includes("char")) {
-      this.targetFPC = hit.pickedMesh.name;
-    } else {
-      this.targetFPC = "";
-    }
-
-    let distanceFromCamera = 25;
-
-    if (this.player.talkingTo != "") {
-      //TODO: Here we should call for a dialoge window;
-      this.openDialoge("Ramy", char1, "Greetings mate'!");
-    }
-  };
-  this.scene.registerBeforeRender(() => {
-    tryToTalk();
-  });
-
-  window.addEventListener("keypress", ev => {
-    if (ev.key == "e" || ev.key == "E" || ev.key == "У" || ev.key == "у") {
-    }
-  });
-}
-
 function startHolding(mesh) {
   mesh.physicsImpostor.setParam("mass", 0);
 }
 
 function endHolding(mesh) {
   mesh.physicsImpostor.setParam("mass", 10);
+}
+
+export function addDialogeControls(level, player) {
+  var targetFPC = "";
+  
+  let findSomeoneToTalkTo = () => {
+    let origin = level.camera.position;
+    let forward = level.camera.getFrontPosition(1);
+    let direction = forward.subtract(origin);
+    direction = Vector3.Normalize(direction);
+    let length = 50;
+
+    let ray = new Ray(origin, direction, length);
+
+    let hit = level.scene.pickWithRay(ray);
+
+    if (hit.pickedMesh && hit.pickedMesh.name.includes("char")) {
+      targetFPC = hit.pickedMesh.name;
+    } else {
+      targetFPC = "";
+    }
+
+    let distanceFromCamera = 25;
+
+    if (player.talkingTo != "") {
+      //TODO: Here we should call for a dialoge window;
+    }
+  };
+
+  level.scene.registerBeforeRender(() => {
+    findSomeoneToTalkTo();
+  });
+
+  window.addEventListener("keypress", ev => {
+    if (ev.key == "e" || ev.key == "E" || ev.key == "У" || ev.key == "у") {
+      console.log(ev.key);
+      if (targetFPC != "") {
+        level.characters[targetFPC].talkTo();
+      };
+    }
+  });
 }

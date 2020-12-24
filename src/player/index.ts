@@ -1,18 +1,19 @@
 import Hand from "./hand";
-import { addFirstPersonControls, addPickingUpControls } from "./controlls";
+import { addFirstPersonControls, addPickingUpControls, addDialogeControls } from "./controlls";
 export default class Player {
     public data: {
         hand?: Hand;
         holdingObject?: string;
     }
     public target: any;
-    constructor(canvas, scene, camera) {
+    constructor(canvas, level) {
         this.data = {
-            hand: new Hand(scene, camera),
+            hand: new Hand(level.scene, level.camera),
             holdingObject: "",
         }
-        addFirstPersonControls(canvas,scene,camera);
-       this.target = addPickingUpControls(scene,camera, this.data);
+        addFirstPersonControls(canvas,level.scene,level.camera);
+        addPickingUpControls(level.scene,level.camera, this.data); 
+        addDialogeControls(level, this.data); 
     }
     
 }
