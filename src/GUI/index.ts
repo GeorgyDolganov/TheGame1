@@ -1,28 +1,33 @@
-var GUI;
+let GUI;
+
+const dialogeListener = (event) => {
+  if (event.key === 'e' || event.key === 'E' || event.key === 'У' || event.key === 'у') { GUI.closeDialoge(); }
+};
+
 export default GUI = {
   createGUI() {
     this.GUI = {
-      container: document.createElement("div"),
-      interact: document.createElement("div"),
-      dialoge: document.createElement("div")
+      container: document.createElement('div'),
+      interact: document.createElement('div'),
+      dialoge: document.createElement('div'),
     };
-    this.GUI.container.setAttribute("id", "GUI");
-    this.GUI.container.classList.add("GUI");
+    this.GUI.container.setAttribute('id', 'GUI');
+    this.GUI.container.classList.add('GUI');
     document.body.appendChild(this.GUI.container);
-    document.getElementById("GUI").appendChild(this.GUI.dialoge);
-    document.getElementById("GUI").appendChild(this.GUI.interact);
+    document.getElementById('GUI').appendChild(this.GUI.dialoge);
+    document.getElementById('GUI').appendChild(this.GUI.interact);
   },
   createDialogeGUI() {
-    this.GUI.dialoge.innerHTML = ``;
-    this.GUI.dialoge.setAttribute("id", "dialoge");
-    this.GUI.dialoge.classList.add("dialoge");
-    this.GUI.dialoge.style.display = "none";
+    this.GUI.dialoge.innerHTML = '';
+    this.GUI.dialoge.setAttribute('id', 'dialoge');
+    this.GUI.dialoge.classList.add('dialoge');
+    this.GUI.dialoge.style.display = 'none';
   },
   createInteractGUI() {
-    this.GUI.interact.innerHTML = ``;
-    this.GUI.interact.setAttribute("id", "interact");
-    this.GUI.interact.classList.add("interact");
-    this.GUI.interact.style.display = "none";
+    this.GUI.interact.innerHTML = '';
+    this.GUI.interact.setAttribute('id', 'interact');
+    this.GUI.interact.classList.add('interact');
+    this.GUI.interact.style.display = 'none';
   },
   openDialoge(name, img, text) {
     this.GUI.dialoge.innerHTML = `
@@ -38,16 +43,11 @@ export default GUI = {
       </div>  
     </div>
     <div class="tip">PRESS E TO CLOSE</div>`;
-    this.GUI.dialoge.style.display = "flex";
+    this.GUI.dialoge.style.display = 'flex';
     document.addEventListener('keypress', dialogeListener, false);
-    
   },
-  _closeDialoge() {
-    this.GUI.dialoge.style.display = "none";
+  closeDialoge() {
+    this.GUI.dialoge.style.display = 'none';
     document.removeEventListener('keypress', dialogeListener, false);
-  }
-}
-var dialogeListener = function (event) {
-  if (event.key == "e" || event.key == "E" || event.key == "У" || event.key == "у")
-  GUI._closeDialoge();
+  },
 };

@@ -1,21 +1,21 @@
-import { Vector3 } from "@babylonjs/core";
+import { Vector3 } from '@babylonjs/core';
 
-export default function multiplyQuaternionByVector (quaternion, vector) {
-  var target = new Vector3();
-  var x = vector.x,
-    y = vector.y,
-    z = vector.z;
+export default function multiplyQuaternionByVector(quaternion, vector) {
+  const target = new Vector3();
+  const { x } = vector;
+  const { y } = vector;
+  const { z } = vector;
 
-  var qx = quaternion.x,
-    qy = quaternion.y,
-    qz = quaternion.z,
-    qw = quaternion.w;
+  const qx = quaternion.x;
+  const qy = quaternion.y;
+  const qz = quaternion.z;
+  const qw = quaternion.w;
 
   // q*v
-  var ix = qw * x + qy * z - qz * y,
-    iy = qw * y + qz * x - qx * z,
-    iz = qw * z + qx * y - qy * x,
-    iw = -qx * x - qy * y - qz * z;
+  const ix = qw * x + qy * z - qz * y;
+  const iy = qw * y + qz * x - qx * z;
+  const iz = qw * z + qx * y - qy * x;
+  const iw = -qx * x - qy * y - qz * z;
 
   target.x = ix * qw + iw * -qx + iy * -qz - iz * -qy;
   target.y = iy * qw + iw * -qy + iz * -qx - ix * -qz;
