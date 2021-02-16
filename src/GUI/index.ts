@@ -1,9 +1,6 @@
 let GUI;
 
-const dialogeListener = (event) => {
-  if (event.key === 'e' || event.key === 'E' || event.key === 'У' || event.key === 'у') { GUI.closeDialoge(); }
-};
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default GUI = {
   createGUI() {
     this.GUI = {
@@ -44,10 +41,8 @@ export default GUI = {
     </div>
     <div class="tip">PRESS E TO CLOSE</div>`;
     this.GUI.dialoge.style.display = 'flex';
-    document.addEventListener('keypress', dialogeListener, false);
   },
-  closeDialoge() {
+  closeDialogue() {
     this.GUI.dialoge.style.display = 'none';
-    document.removeEventListener('keypress', dialogeListener, false);
   },
 };

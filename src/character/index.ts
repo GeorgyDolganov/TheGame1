@@ -13,6 +13,13 @@ export interface CharOptions {
   }
 }
 
+export interface AnimationOptions {
+  rows: number,
+  columns: number,
+  frames: number,
+  speed: number,
+}
+
 export class Character {
   mesh: Mesh;
 
@@ -44,12 +51,14 @@ export class Character {
   }
 
   talkTo(id) {
+    console.log(id);
     console.log(data);
-    if (this.dialogueCounter < data[id][this.dialogueState].length) {
+    if (data[id] && this.dialogueCounter < data[id][this.dialogueState].length) {
+      console.log(data[id][this.dialogueState][this.dialogueCounter]);
       GUI.openDialoge(id, this.image, data[id][this.dialogueState][this.dialogueCounter]);
       this.dialogueCounter += 1;
     } else {
-      GUI.closeDialoge();
+      GUI.closeDialogue();
       this.dialogueCounter = 0;
     }
   }

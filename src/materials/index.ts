@@ -3,14 +3,19 @@ import createTextures from './textures';
 
 interface Materials {
   enviroment: {
-    red: StandardMaterial;
-    ground: StandardMaterial;
-    wall: StandardMaterial;
-  };
+    red: StandardMaterial,
+    ground: StandardMaterial,
+    wall: StandardMaterial,
+  },
   sprites: {
-    guy: StandardMaterial;
-    monster: StandardMaterial;
-  };
+    guy: StandardMaterial,
+    monster: StandardMaterial,
+  },
+  animations: {
+    elder: {
+      idle: StandardMaterial
+    },
+  }
 }
 
 export default function createMaterials(scene) {
@@ -22,15 +27,19 @@ export default function createMaterials(scene) {
       ground: new StandardMaterial('groundMat', scene),
     },
     sprites: {
-      guy: new StandardMaterial('guyTexture', scene),
-      monster: new StandardMaterial('monsterTexture', scene),
+      guy: new StandardMaterial('guyMat', scene),
+      monster: new StandardMaterial('monsterMat', scene),
+    },
+    animations: {
+      elder: {
+        idle: new StandardMaterial('elderIdleMat', scene),
+      },
     },
   };
 
   materials.enviroment.red.emissiveColor = new Color3(1, 0, 0);
 
   materials.enviroment.wall.diffuseTexture = textures.dungeonset.wall1;
-
   materials.enviroment.ground.diffuseTexture = textures.dungeonset.floor;
 
   materials.enviroment.ground.emissiveColor = new Color3(1, 1, 1);
@@ -46,6 +55,11 @@ export default function createMaterials(scene) {
   materials.sprites.monster.emissiveColor = new Color3(1, 1, 1);
   materials.sprites.guy.disableLighting = true;
   materials.sprites.monster.disableLighting = true;
+
+  materials.animations.elder.idle.diffuseTexture = textures.animations.elder.idle;
+  materials.animations.elder.idle.diffuseTexture.hasAlpha = true;
+  materials.animations.elder.idle.emissiveColor = new Color3(1, 1, 1);
+  materials.animations.elder.idle.disableLighting = true;
 
   return materials;
 }

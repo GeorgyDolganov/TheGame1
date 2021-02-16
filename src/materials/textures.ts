@@ -15,28 +15,36 @@ import floor from './assets/textures/dungeonset/floor.png';
 import monster1 from './assets/textures/dungeonset/monster1.png';
 import wall1 from './assets/textures/dungeonset/wall1.png';
 
+import elderIdle from './assets/animations/Elder.png';
+
 export default function createTextures(scene) {
   let textures: {
     cobblestone: {
-      diff: Texture;
-      buff: Texture;
-      spec: Texture;
-      norm: Texture;
-    };
+      diff: Texture,
+      buff: Texture,
+      spec: Texture,
+      norm: Texture,
+    },
     blockwall: {
-      diff: Texture;
-      norm: Texture;
-      ao: Texture;
-    };
+      diff: Texture,
+      norm: Texture,
+      ao: Texture,
+    },
     dungeonset: {
-      char1: Texture;
-      floorBig: Texture;
-      floorBig1: Texture;
-      floor: Texture;
-      monster1: Texture;
-      wall1: Texture;
-    };
+      char1: Texture,
+      floorBig: Texture,
+      floorBig1: Texture,
+      floor: Texture,
+      monster1: Texture,
+      wall1: Texture,
+    },
+    animations: {
+      elder: {
+        idle: Texture,
+      },
+    },
   };
+  // eslint-disable-next-line prefer-const
   textures = {
     cobblestone: {
       diff: new Texture(CobleDiff, scene),
@@ -99,6 +107,17 @@ export default function createTextures(scene) {
         Texture.NEAREST_SAMPLINGMODE,
       ),
     },
+    animations: {
+      elder: {
+        idle: new Texture(
+          elderIdle,
+          scene,
+          false,
+          true,
+          Texture.NEAREST_SAMPLINGMODE,
+        ),
+      },
+    },
   };
 
   textures.dungeonset.wall1.uScale = 12.5;
@@ -115,5 +134,9 @@ export default function createTextures(scene) {
   textures.blockwall.diff.vScale = 4;
   textures.blockwall.norm.uScale = 40;
   textures.blockwall.norm.vScale = 4;
+
+  textures.animations.elder.idle.uScale = 0.5;
+  textures.animations.elder.idle.vScale = 0.5;
+
   return textures;
 }

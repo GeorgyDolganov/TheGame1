@@ -2,9 +2,7 @@ import {
   Axis,
   Color3,
   Mesh,
-  MeshBuilder,
   OimoJSPlugin,
-  PhysicsImpostor,
   PointLight,
   Quaternion,
   Scene,
@@ -16,6 +14,8 @@ import oimo from 'oimophysics';
 import createMaterials from '../materials';
 import Ramy from '../character/Ramy';
 import Monster from '../character/Monster';
+import Elder from '../character/Elder';
+import createMesh from '../utils/createMesh';
 
 export default class Scene0 {
   public scene: Scene;
@@ -40,7 +40,7 @@ export default class Scene0 {
 
   wall4: Mesh;
 
-  softSphere: Mesh;
+  physSphere: Mesh;
 
   characters: object;
 
@@ -54,9 +54,9 @@ export default class Scene0 {
     this.createLights();
     this.createShadows();
     this.createCamera(canvas);
+    this.addPhysics();
     this.addMeshes();
     this.addCharacters();
-    this.addPhysics();
     this.renderLoop(engine);
   }
 
@@ -94,162 +94,168 @@ export default class Scene0 {
   }
 
   private addMeshes() {
-    this.ground = MeshBuilder.CreateBox(
+    this.ground = createMesh(this.ground, 'CreateBox', [
       'ground',
       { width: 10000, depth: 10000, height: 2 },
       this.scene,
-    );
-    this.ground.position.y = -10;
-    this.ground.material = this.materials.enviroment.ground;
-    this.ground.checkCollisions = true;
-    this.ground.isPickable = false;
+    ], {
+      position: {
+        x: 0,
+        y: -10,
+        z: 0,
+      },
+      material: this.materials.enviroment.ground,
+      checkCollisions: true,
+      isPickable: false,
+    }, [
+      'BoxImpostor',
+      { mass: 0, friction: 0.5, restitution: 0.7 },
+    ]);
 
-    this.roof = MeshBuilder.CreateBox(
+    this.roof = createMesh(this.roof, 'CreateBox', [
       'roof',
       { width: 10000, depth: 10000, height: 2 },
       this.scene,
-    );
-    this.roof.position.y = 60;
-    this.roof.isPickable = false;
-    this.roof.material = this.materials.enviroment.ground;
+    ], {
+      position: {
+        x: 0,
+        y: 50,
+        z: 0,
+      },
+      material: this.materials.enviroment.ground,
+      checkCollisions: true,
+      isPickable: false,
+    }, [
+      'BoxImpostor',
+      { mass: 0, friction: 0.5, restitution: 0.7 },
+    ]);
 
-    this.wall1 = MeshBuilder.CreateBox(
+    this.wall1 = createMesh(this.wall1, 'CreateBox', [
       'wall1',
       { width: 1000, height: 100 },
       this.scene,
-    );
-    this.wall1.checkCollisions = true;
-    this.wall1.rotation.y = 0;
-    this.wall1.position.z = 200;
-    this.wall1.position.y = 10;
-    this.wall1.isPickable = false;
-    this.wall1.material = this.materials.enviroment.wall;
+    ], {
+      position: {
+        x: 0,
+        y: 10,
+        z: 200,
+      },
+      material: this.materials.enviroment.wall,
+      checkCollisions: true,
+      isPickable: false,
+    }, [
+      'BoxImpostor',
+      { mass: 0, friction: 0.5, restitution: 0 },
+    ]);
 
-    this.wall2 = MeshBuilder.CreateBox(
+    this.wall2 = createMesh(this.wall2, 'CreateBox', [
       'wall2',
       { width: 1000, height: 100 },
       this.scene,
-    );
-    this.wall2.checkCollisions = true;
-    this.wall2.rotation.y = 0;
-    this.wall2.position.z = -300;
-    this.wall2.position.y = 10;
-    this.wall2.isPickable = false;
-    this.wall2.material = this.materials.enviroment.wall;
+    ], {
+      position: {
+        x: 0,
+        y: 10,
+        z: -300,
+      },
+      material: this.materials.enviroment.wall,
+      checkCollisions: true,
+      isPickable: false,
+    }, [
+      'BoxImpostor',
+      { mass: 0, friction: 0.5, restitution: 0 },
+    ]);
 
-    this.wall3 = MeshBuilder.CreateBox(
+    this.wall3 = createMesh(this.wall3, 'CreateBox', [
       'wall3',
       { width: 1000, height: 100 },
       this.scene,
-    );
+    ], {
+      position: {
+        x: -300,
+        y: 10,
+        z: -100,
+      },
+      material: this.materials.enviroment.wall,
+      checkCollisions: true,
+      isPickable: false,
+      rotationQuaternion: Quaternion.RotationAxis(Axis.Y, 1.57),
+    }, [
+      'BoxImpostor',
+      { mass: 0, friction: 0.5, restitution: 0 },
+    ]);
 
-    this.wall3.rotationQuaternion = Quaternion.RotationAxis(Axis.Y, 1.57);
-    this.wall3.checkCollisions = true;
-    this.wall3.rotation.y = 180;
-    this.wall3.position.z = -100;
-    this.wall3.position.x = -300;
-    this.wall3.position.y = 10;
-    this.wall3.isPickable = false;
-    this.wall3.material = this.materials.enviroment.wall;
-
-    this.wall4 = MeshBuilder.CreateBox(
+    this.wall4 = createMesh(this.wall4, 'CreateBox', [
       'wall4',
       { width: 1000, height: 100 },
       this.scene,
-    );
+    ], {
+      position: {
+        x: 300,
+        y: 10,
+        z: -100,
+      },
+      material: this.materials.enviroment.wall,
+      checkCollisions: true,
+      isPickable: false,
+      rotationQuaternion: Quaternion.RotationAxis(Axis.Y, 1.57),
+    }, [
+      'BoxImpostor',
+      { mass: 0, friction: 0.5, restitution: 0 },
+    ]);
 
-    this.wall4.rotationQuaternion = Quaternion.RotationAxis(Axis.Y, 1.57);
-    this.wall4.checkCollisions = true;
-    this.wall4.position.z = -100;
-    this.wall4.position.x = 300;
-    this.wall4.position.y = 10;
-    this.wall4.isPickable = false;
-    this.wall4.material = this.materials.enviroment.wall;
-
-    this.softSphere = MeshBuilder.CreateSphere(
-      'obj-softSphere',
-      { diameter: 10, segments: 38, updatable: true },
+    this.physSphere = createMesh(this.physSphere, 'CreateSphere', [
+      'physSphere',
+      { diameter: 5, segments: 15, updatable: true },
       this.scene,
-    );
-    this.softSphere.position.y = 30;
-    this.softSphere.position.z = -100;
-    this.softSphere.checkCollisions = true;
-    this.softSphere.material = this.materials.enviroment.red;
-    this.softSphere.isPickable = true;
-    this.shadowGenerator.getShadowMap().renderList.push(this.softSphere);
+    ], {
+      position: {
+        x: 0,
+        y: 30,
+        z: -100,
+      },
+      material: this.materials.enviroment.red,
+      checkCollisions: true,
+      isPickable: true,
+    }, [
+      'SphereImpostor',
+      { mass: 99999, restitution: 0.98, friction: 0.2 },
+    ]);
   }
 
   private addCharacters() {
     this.characters = {
       char_Ramy: new Ramy({
-        scene: this.scene, materials: this.materials,
+        scene: this.scene,
+        materials: this.materials,
       }),
       char_Monster: new Monster({
-        scene: this.scene, materials: this.materials,
+        scene: this.scene,
+        materials: this.materials,
       }),
+      char_Elder: new Elder(
+        {
+          scene: this.scene,
+          materials: this.materials,
+        },
+        {
+          rows: 2,
+          columns: 2,
+          frames: 3,
+          speed: 200,
+        },
+      ),
     };
   }
 
   private addPhysics() {
-    const gravityVector = new Vector3(0, -9.8, 0);
+    const gravityVector = new Vector3(0, -9.81, 0);
     const physicsPlugin = new OimoJSPlugin(null, oimo);
     this.scene.enablePhysics(gravityVector, physicsPlugin);
-    const physicsEngine = this.scene.getPhysicsEngine();
-    console.log(physicsEngine);
-
-    this.softSphere.physicsImpostor = new PhysicsImpostor(
-      this.softSphere,
-      PhysicsImpostor.SphereImpostor,
-      { mass: 5, restitution: 1 },
-      this.scene,
-    );
-
-    this.ground.physicsImpostor = new PhysicsImpostor(
-      this.ground,
-      PhysicsImpostor.BoxImpostor,
-      { mass: 0, friction: 0.5, restitution: 0.7 },
-      this.scene,
-    );
-    this.ground.receiveShadows = true;
-    this.wall1.physicsImpostor = new PhysicsImpostor(
-      this.wall1,
-      PhysicsImpostor.BoxImpostor,
-      { mass: 0, friction: 0.5, restitution: 0 },
-      this.scene,
-    );
-
-    this.wall2.physicsImpostor = new PhysicsImpostor(
-      this.wall2,
-      PhysicsImpostor.BoxImpostor,
-      { mass: 0, friction: 0.5, restitution: 0 },
-      this.scene,
-    );
-
-    this.wall3.physicsImpostor = new PhysicsImpostor(
-      this.wall3,
-      PhysicsImpostor.BoxImpostor,
-      { mass: 0, friction: 0.5, restitution: 0 },
-      this.scene,
-    );
-
-    this.wall4.physicsImpostor = new PhysicsImpostor(
-      this.wall4,
-      PhysicsImpostor.BoxImpostor,
-      { mass: 0, friction: 0.5, restitution: 0 },
-      this.scene,
-    );
-
-    this.roof.physicsImpostor = new PhysicsImpostor(
-      this.roof,
-      PhysicsImpostor.BoxImpostor,
-      { mass: 0, friction: 0.5, restitution: 0 },
-      this.scene,
-    );
 
     const playerImpulse = 100;
-
     this.camera.onCollide = (mesh) => {
-      if (mesh.name === 'obj-softSphere') {
+      if (mesh.name === 'physSphere') {
         // we can check if mesh is in pushable collection later
         const givenVelocity = playerImpulse / mesh.physicsImpostor.mass;
         const movementDirectionVector = this.camera.position

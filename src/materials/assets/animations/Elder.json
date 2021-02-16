@@ -1,0 +1,45 @@
+{ "frames": {
+   "Elder/0": {
+    "frame": { "x": 0, "y": 0, "w": 80, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 96 },
+    "sourceSize": { "w": 80, "h": 96 },
+    "duration": 250
+   },
+   "Elder/1": {
+    "frame": { "x": 80, "y": 0, "w": 80, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 96 },
+    "sourceSize": { "w": 80, "h": 96 },
+    "duration": 250
+   },
+   "Elder/2": {
+    "frame": { "x": 0, "y": 96, "w": 80, "h": 96 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 96 },
+    "sourceSize": { "w": 80, "h": 96 },
+    "duration": 250
+   }
+ },
+ "animations":{
+   "Elder/idle" : ["Elder/0", "Elder/1", "Elder/2"]
+ },
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.2.25-x64",
+  "image": "Elder.png",
+  "format": "RGBA8888",
+  "size": { "w": 160, "h": 192 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}
