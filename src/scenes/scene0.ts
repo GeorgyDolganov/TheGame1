@@ -1,5 +1,4 @@
 import {
-  Axis,
   Color3,
   Mesh,
   OimoJSPlugin,
@@ -9,13 +8,21 @@ import {
   ShadowGenerator,
   UniversalCamera,
   Vector3,
+  SceneLoader,
+  AssetContainer,
+  Texture,
+  StandardMaterial,
+  PhysicsImpostor,
 } from '@babylonjs/core';
 import oimo from 'oimophysics';
 import createMaterials from '../materials';
-import Ramy from '../character/Ramy';
-import Monster from '../character/Monster';
 import Elder from '../character/Elder';
 import createMesh from '../utils/createMesh';
+import fruitMesh from '../assets/models/fruit.babylon';
+import fruitTexture from '../assets/models/FruitTexture2.png';
+import altarMesh from '../assets/models/altar.babylon';
+import altarTexture from '../assets/models/AltarTexture.png';
+import '@babylonjs/loaders/glTF';
 
 export default class Scene0 {
   public scene: Scene;
@@ -44,11 +51,19 @@ export default class Scene0 {
 
   characters: object;
 
+  fruit: any;
+  altar: any;
+
   constructor(engine, canvas) {
     this.scene = new Scene(engine);
     this.scene.collisionsEnabled = true;
     this.scene.ambientColor = new Color3(1, 1, 1);
     this.scene.gravity = new Vector3(0, -10, 0);
+    this.scene.fogMode = Scene.FOGMODE_EXP;
+    this.scene.fogDensity = 0.01;
+    this.scene.fogStart = 20.0;
+    this.scene.fogEnd = 100.0;
+    this.scene.fogColor = new Color3(0.20, 0.20, 0.2745);
 
     this.loadAssets();
     this.createLights();
@@ -112,127 +127,107 @@ export default class Scene0 {
       { mass: 0, friction: 0.5, restitution: 0.7 },
     ]);
 
-    this.roof = createMesh(this.roof, 'CreateBox', [
-      'roof',
-      { width: 10000, depth: 10000, height: 2 },
-      this.scene,
-    ], {
-      position: {
-        x: 0,
-        y: 50,
-        z: 0,
-      },
-      material: this.materials.enviroment.ground,
-      checkCollisions: true,
-      isPickable: false,
-    }, [
-      'BoxImpostor',
-      { mass: 0, friction: 0.5, restitution: 0.7 },
-    ]);
+    const treesContainer = new AssetContainer(this.scene);
+    const trees = [];
+    for (let i = 0; i < 500; i += 1) {
+      const tree = Math.floor(Math.random() * 4);
+      trees[i] = createMesh(trees[i], 'CreatePlane', [
+        `tree${i}`,
+        { width: 48, height: tree !== 3 ? 112 : 96 },
+        this.scene,
+      ], {
+        position: {
+          x: (Math.round(Math.random()) * 2 - 1) * Math.random() * 1000,
+          y: tree !== 3 ? 45 : 38,
+          z: (Math.round(Math.random()) * 2 - 1) * Math.random() * 1000,
+        },
+        material: this.materials.trees.bluberry[tree],
+        billboardMode: Mesh.BILLBOARDMODE_Y,
+      });
+      treesContainer.meshes.push(trees[i]);
+    }
 
-    this.wall1 = createMesh(this.wall1, 'CreateBox', [
-      'wall1',
-      { width: 1000, height: 100 },
-      this.scene,
-    ], {
-      position: {
-        x: 0,
-        y: 10,
-        z: 200,
-      },
-      material: this.materials.enviroment.wall,
-      checkCollisions: true,
-      isPickable: false,
-    }, [
-      'BoxImpostor',
-      { mass: 0, friction: 0.5, restitution: 0 },
-    ]);
+    SceneLoader.ImportMeshAsync('', '', fruitMesh, this.scene).then((result) => {
+      // eslint-disable-next-line prefer-destructuring
+      this.fruit = result.meshes[0];
+      this.fruit.scaling = new Vector3(25, 25, 25);
+      const texture = new Texture(fruitTexture, this.scene,
+        false,
+        true,
+        Texture.NEAREST_SAMPLINGMODE);
+      const material = new StandardMaterial('fruitMaterial', this.scene);
+      material.disableLighting = true;
+      material.sideOrientation = this.fruit.material.sideOrientation;
+      material.emissiveTexture = texture;
+      material.forceDepthWrite = true;
+      material.reservedDataStore = { hidden: true };
+      this.fruit.material = material;
+      this.fruit.id = 'physFruit';
+      this.fruit.name = 'physFruit';
+      this.fruit.checkCollisions = true;
+      this.fruit.position.set(100, 10, 100);
+      this.fruit.physicsImpostor = new PhysicsImpostor(
+        this.fruit,
+        PhysicsImpostor.MeshImpostor,
+        { mass: 100000, restitution: 0, friction: 1 },
+      );
+      const dummy = new Mesh(
+        'physFruit-dummy',
+        this.scene,
+      );
+      dummy.rotationQuaternion = new Quaternion();
+      console.log(result);
+    });
 
-    this.wall2 = createMesh(this.wall2, 'CreateBox', [
-      'wall2',
-      { width: 1000, height: 100 },
-      this.scene,
-    ], {
-      position: {
-        x: 0,
-        y: 10,
-        z: -300,
-      },
-      material: this.materials.enviroment.wall,
-      checkCollisions: true,
-      isPickable: false,
-    }, [
-      'BoxImpostor',
-      { mass: 0, friction: 0.5, restitution: 0 },
-    ]);
+    SceneLoader.ImportMeshAsync('', '', altarMesh, this.scene).then((result) => {
+      // eslint-disable-next-line prefer-destructuring
+      this.altar = result.meshes[0];
+      this.altar.scaling = new Vector3(15, 15, 15);
+      const texture = new Texture(altarTexture, this.scene,
+        false,
+        true,
+        Texture.NEAREST_SAMPLINGMODE);
+      const material = new StandardMaterial('altarMaterial', this.scene);
+      material.disableLighting = true;
+      material.sideOrientation = this.altar.material.sideOrientation;
+      material.emissiveTexture = texture;
+      material.forceDepthWrite = true;
+      material.reservedDataStore = { hidden: true };
+      this.altar.material = material;
+      this.altar.id = 'altar';
+      this.altar.name = 'altar';
+      this.altar.checkCollisions = true;
+      this.altar.position.set(-100, -2, -100);
+      this.altar.physicsImpostor = new PhysicsImpostor(
+        this.altar,
+        PhysicsImpostor.MeshImpostor,
+        { mass: 10000000, restitution: 0, friction: 1 },
+      );
+      console.log(result);
+      console.log(result);
+    });
 
-    this.wall3 = createMesh(this.wall3, 'CreateBox', [
-      'wall3',
-      { width: 1000, height: 100 },
-      this.scene,
-    ], {
-      position: {
-        x: -300,
-        y: 10,
-        z: -100,
-      },
-      material: this.materials.enviroment.wall,
-      checkCollisions: true,
-      isPickable: false,
-      rotationQuaternion: Quaternion.RotationAxis(Axis.Y, 1.57),
-    }, [
-      'BoxImpostor',
-      { mass: 0, friction: 0.5, restitution: 0 },
-    ]);
-
-    this.wall4 = createMesh(this.wall4, 'CreateBox', [
-      'wall4',
-      { width: 1000, height: 100 },
-      this.scene,
-    ], {
-      position: {
-        x: 300,
-        y: 10,
-        z: -100,
-      },
-      material: this.materials.enviroment.wall,
-      checkCollisions: true,
-      isPickable: false,
-      rotationQuaternion: Quaternion.RotationAxis(Axis.Y, 1.57),
-    }, [
-      'BoxImpostor',
-      { mass: 0, friction: 0.5, restitution: 0 },
-    ]);
-
-    this.physSphere = createMesh(this.physSphere, 'CreateSphere', [
-      'physSphere',
-      { diameter: 5, segments: 15, updatable: true },
-      this.scene,
-    ], {
-      position: {
-        x: 0,
-        y: 30,
-        z: -100,
-      },
-      material: this.materials.enviroment.red,
-      checkCollisions: true,
-      isPickable: true,
-    }, [
-      'SphereImpostor',
-      { mass: 99999, restitution: 0.98, friction: 0.2 },
-    ]);
+    // this.physSphere = createMesh(this.physSphere, 'CreateSphere', [
+    //   'physSphere',
+    //   { diameter: 5, segments: 15, updatable: true },
+    //   this.scene,
+    // ], {
+    //   position: {
+    //     x: 0,
+    //     y: 30,
+    //     z: -100,
+    //   },
+    //   material: this.materials.enviroment.red,
+    //   checkCollisions: true,
+    //   isPickable: true,
+    // }, [
+    //   'SphereImpostor',
+    //   { mass: 99999, restitution: 0.98, friction: 0.2 },
+    // ]);
   }
 
   private addCharacters() {
     this.characters = {
-      char_Ramy: new Ramy({
-        scene: this.scene,
-        materials: this.materials,
-      }),
-      char_Monster: new Monster({
-        scene: this.scene,
-        materials: this.materials,
-      }),
       char_Elder: new Elder(
         {
           scene: this.scene,
@@ -249,7 +244,7 @@ export default class Scene0 {
   }
 
   private addPhysics() {
-    const gravityVector = new Vector3(0, -9.81, 0);
+    const gravityVector = new Vector3(0, -39.81, 0);
     const physicsPlugin = new OimoJSPlugin(null, oimo);
     this.scene.enablePhysics(gravityVector, physicsPlugin);
 

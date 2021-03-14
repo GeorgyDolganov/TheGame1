@@ -17,6 +17,11 @@ import wall1 from './assets/textures/dungeonset/wall1.png';
 
 import elderIdle from './assets/animations/Elder.png';
 
+import tree0 from './assets/textures/selfmade/tree0.png';
+import tree1 from './assets/textures/selfmade/tree1.png';
+import tree2 from './assets/textures/selfmade/tree2.png';
+import tree3 from './assets/textures/selfmade/tree3.png';
+
 export default function createTextures(scene) {
   let textures: {
     cobblestone: {
@@ -43,6 +48,14 @@ export default function createTextures(scene) {
         idle: Texture,
       },
     },
+    trees: {
+      bluberry: [
+        Texture,
+        Texture,
+        Texture,
+        Texture,
+      ]
+    }
   };
   // eslint-disable-next-line prefer-const
   textures = {
@@ -117,6 +130,38 @@ export default function createTextures(scene) {
           Texture.NEAREST_SAMPLINGMODE,
         ),
       },
+    },
+    trees: {
+      bluberry: [
+        new Texture(
+          tree0,
+          scene,
+          false,
+          true,
+          Texture.NEAREST_SAMPLINGMODE,
+        ),
+        new Texture(
+          tree1,
+          scene,
+          false,
+          true,
+          Texture.NEAREST_SAMPLINGMODE,
+        ),
+        new Texture(
+          tree2,
+          scene,
+          false,
+          true,
+          Texture.NEAREST_SAMPLINGMODE,
+        ),
+        new Texture(
+          tree3,
+          scene,
+          false,
+          true,
+          Texture.NEAREST_SAMPLINGMODE,
+        ),
+      ],
     },
   };
 

@@ -1,5 +1,4 @@
-import { TimeInterval } from 'rxjs';
-import image from '../materials/assets/animations/Elder.png';
+import image from '../materials/assets/textures/selfmade/Elder-portrait.png';
 import { Character, CharOptions, AnimationOptions } from './index';
 
 export default class Elder extends Character {

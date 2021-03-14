@@ -42,7 +42,7 @@ p {
         .img {
           image-rendering: pixelated;
           background-size: cover;
-          width: 255px;
+          width: 190px;
           height: 190px;
           margin-bottom: 20px;
         }
@@ -52,7 +52,8 @@ p {
       }
     }
     .text {
-      font-size: 24px;
+      font-size: 32px;
+      font-weight: 700;
       display: flex;
       margin-top: -35px;
       color: #fff;

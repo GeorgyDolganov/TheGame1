@@ -1,7 +1,7 @@
 import {
   Mesh, MeshBuilder, StandardMaterial, Texture, Color3,
 } from '@babylonjs/core';
-import handTexture from '../../assets/textures/selfmade/hand.png';
+import handTexture from '../materials/assets/textures/selfmade/hand.png';
 
 export default class Hand {
   public mesh: Mesh;
@@ -11,16 +11,16 @@ export default class Hand {
   private texture: Texture;
 
   constructor(scene, camera) {
-    this._createTexture(scene);
-    this._createMaterial(scene);
-    this._createMesh(scene, camera);
+    this.createTexture(scene);
+    this.createMaterial(scene);
+    this.createMesh(scene, camera);
   }
 
-  private _createTexture(scene) {
+  private createTexture(scene) {
     this.texture = new Texture(handTexture, scene, false, true, Texture.NEAREST_SAMPLINGMODE);
   }
 
-  private _createMaterial(scene) {
+  private createMaterial(scene) {
     this.material = new StandardMaterial('hand', scene);
     this.material.diffuseTexture = this.texture;
     this.material.diffuseTexture.hasAlpha = true;
@@ -28,7 +28,7 @@ export default class Hand {
     this.material.disableLighting = true;
   }
 
-  private _createMesh(scene, camera) {
+  private createMesh(scene, camera) {
     this.mesh = MeshBuilder.CreatePlane('hand', { size: 30 }, scene);
     this.mesh.position.set(1.9, -1, 3);
     this.mesh.scaling.set(0.05, 0.05, 0.05);

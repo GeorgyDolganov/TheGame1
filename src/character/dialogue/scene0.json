@@ -40,23 +40,22 @@
         ]
     },
     "char_Elder": {
+        "name": "Elder",
         "0": [
-            "Hi, I'm a test character",
-            "This is my second dialogue",
-            "Third one",
-            "Alright, this is the fourth one",
-            "Come on now, the fith dialogue!",
-            "Heeey, six six six",
-            "Stop, this is the last one I can handle..."
+            "Oh, child. You finally asleep...",
+            "Look at the sky, see how endless it is?",
+            "There is no stars left, cause the Gods are angry at us...",
+            "No one would sacrifice anything to reach one.",
+            "You need to restore the sky so we all could see again.",
+            "Find something that would worth to sacricfice,",
+            "And find the right place to perform the ritual."
         ],
         "1": [
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7"
+            "Search the forest to find this fruit,",
+            "It will glow in the dark with it's bright orange color.",
+            "Then find the stone with a cirlce above.",
+            "Bring the fruit to the altar, and place it on the top,",
+            "I will do the rest..."
         ]
     }
 }

@@ -10,3 +10,11 @@ declare module '*.json' {
   const value: any;
   export default value;
 }
+declare module '*.glb' {
+  const value: any;
+  export default value;
+}
+declare module '*.babylon' {
+  const value: any;
+  export default value;
+}

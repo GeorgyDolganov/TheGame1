@@ -34,6 +34,22 @@ module.exports = {
         'file-loader',
       ],
     }, {
+      test: /\.(glb|gltf)$/,
+      use: [{
+        loader: 'file-loader',
+        options: {
+          outputPath: 'assets/models/',
+        },
+      }],
+    }, {
+      test: /\.babylon$/,
+      use: [{
+        loader: 'file-loader',
+        options: {
+          outputPath: 'assets/models/',
+        },
+      }],
+    }, {
       test: /\.s[ac]ss$/i,
       use: [
         // Creates `style` nodes from JS strings

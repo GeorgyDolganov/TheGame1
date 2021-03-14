@@ -55,7 +55,10 @@ export class Character {
     console.log(data);
     if (data[id] && this.dialogueCounter < data[id][this.dialogueState].length) {
       console.log(data[id][this.dialogueState][this.dialogueCounter]);
-      GUI.openDialoge(id, this.image, data[id][this.dialogueState][this.dialogueCounter]);
+      GUI.openDialoge(
+        data[id].name,
+        this.image, data[id][this.dialogueState][this.dialogueCounter]
+      );
       this.dialogueCounter += 1;
     } else {
       GUI.closeDialogue();

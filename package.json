@@ -32,6 +32,7 @@
     "@babylonjs/core": "^4.1.0",
     "@babylonjs/gui": "^4.1.0",
     "@babylonjs/inspector": "^4.1.0",
+    "@babylonjs/loaders": "^4.2.0",
     "@reactivex/rxjs": "^6.6.3",
     "babylon-atlas": "^0.6.0",
     "css-loader": "^5.0.1",

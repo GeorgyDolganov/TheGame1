@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { Color3, StandardMaterial } from '@babylonjs/core';
 import createTextures from './textures';
 
@@ -15,9 +16,21 @@ interface Materials {
     elder: {
       idle: StandardMaterial
     },
+  },
+  trees: {
+    bluberry: [
+      StandardMaterial,
+      StandardMaterial,
+      StandardMaterial,
+      StandardMaterial,
+    ]
   }
 }
 
+/**
+ * 
+ * @returns {{trees.bluberry[]}}
+ */
 export default function createMaterials(scene) {
   const textures = createTextures(scene);
   const materials: Materials = {
@@ -34,6 +47,14 @@ export default function createMaterials(scene) {
       elder: {
         idle: new StandardMaterial('elderIdleMat', scene),
       },
+    },
+    trees: {
+      bluberry: [
+        new StandardMaterial('trees0', scene),
+        new StandardMaterial('trees1', scene),
+        new StandardMaterial('trees2', scene),
+        new StandardMaterial('trees3', scene),
+      ],
     },
   };
 
@@ -60,6 +81,13 @@ export default function createMaterials(scene) {
   materials.animations.elder.idle.diffuseTexture.hasAlpha = true;
   materials.animations.elder.idle.emissiveColor = new Color3(1, 1, 1);
   materials.animations.elder.idle.disableLighting = true;
+
+  materials.trees.bluberry.forEach((el, i) => {
+    el.diffuseTexture = textures.trees.bluberry[i];
+    el.diffuseTexture.hasAlpha = true;
+    el.emissiveColor = new Color3(1, 1, 1);
+    el.disableLighting = true;
+  });
 
   return materials;
 }
