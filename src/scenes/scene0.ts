@@ -13,6 +13,7 @@ import {
   Texture,
   StandardMaterial,
   PhysicsImpostor,
+  Color4, Effect, PostProcess, ParticleSystem, Ray,
 } from '@babylonjs/core';
 import oimo from 'oimophysics';
 import createMaterials from '../materials';
@@ -22,7 +23,10 @@ import fruitMesh from '../assets/models/fruit.babylon';
 import fruitTexture from '../assets/models/FruitTexture2.png';
 import altarMesh from '../assets/models/altar.babylon';
 import altarTexture from '../assets/models/AltarTexture.png';
+import shineTexture from '../assets/particles/Dot.png';
 import '@babylonjs/loaders/glTF';
+import { fromEvent } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 export default class Scene0 {
   public scene: Scene;
@@ -52,11 +56,17 @@ export default class Scene0 {
   characters: object;
 
   fruit: any;
+
   altar: any;
+
+  explosion: ParticleSystem;
+
+  shiningParticles: ParticleSystem;
 
   constructor(engine, canvas) {
     this.scene = new Scene(engine);
     this.scene.collisionsEnabled = true;
+    this.scene.clearColor = new Color4(0.20, 0.20, 0.2745, 1);
     this.scene.ambientColor = new Color3(1, 1, 1);
     this.scene.gravity = new Vector3(0, -10, 0);
     this.scene.fogMode = Scene.FOGMODE_EXP;
@@ -72,6 +82,7 @@ export default class Scene0 {
     this.addPhysics();
     this.addMeshes();
     this.addCharacters();
+    this.addParticles();
     this.renderLoop(engine);
   }
 
@@ -99,12 +110,14 @@ export default class Scene0 {
     this.camera.rotationQuaternion = new Quaternion();
     this.camera.checkCollisions = true;
     this.camera.position.y = 22;
-    this.camera.inertia = 0.4;
-    this.camera.angularSensibility = 4000;
-    this.camera.speed = 15;
+    this.camera.inertia = 0.6;
+    this.camera.angularSensibility = 100000;
+    this.camera.speed = 10;
     this.camera.ellipsoid = new Vector3(1, 10, 1);
     this.camera.applyGravity = true;
-
+    // eslint-disable-next-line no-underscore-dangle
+    this.camera.gamepadAngularSensibility = 100000;
+    this.camera.gamepadMoveSensibility = 1000000;
     this.scene.activeCamera = this.camera;
   }
 
@@ -119,7 +132,7 @@ export default class Scene0 {
         y: -10,
         z: 0,
       },
-      material: this.materials.enviroment.ground,
+      material: this.materials.floor.forest[0],
       checkCollisions: true,
       isPickable: false,
     }, [
@@ -165,12 +178,31 @@ export default class Scene0 {
       this.fruit.id = 'physFruit';
       this.fruit.name = 'physFruit';
       this.fruit.checkCollisions = true;
-      this.fruit.position.set(100, 10, 100);
+      this.fruit.position.set(100, 2, 100);
+      this.shiningParticles.emitter = this.fruit;
       this.fruit.physicsImpostor = new PhysicsImpostor(
         this.fruit,
         PhysicsImpostor.MeshImpostor,
         { mass: 100000, restitution: 0, friction: 1 },
       );
+      const pickUpListener$ = fromEvent(document, 'keydown').pipe(
+        filter(
+          (ev: KeyboardEvent) =>
+            ev.key === 'e' || ev.key === 'E' || ev.key === 'У' || ev.key === 'у',
+        ),
+      );
+      pickUpListener$.subscribe(() => {
+        const origin = this.camera.position;
+        const forward = this.camera.getFrontPosition(1);
+        let direction = forward.subtract(origin);
+        direction = Vector3.Normalize(direction);
+        const length = 50;
+        const ray = new Ray(origin, direction, length);
+        const hit = this.scene.pickWithRay(ray);
+        if (hit?.pickedMesh?.name === 'physFruit') {
+          this.shiningParticles.stop();
+        }
+      });
       const dummy = new Mesh(
         'physFruit-dummy',
         this.scene,
@@ -250,7 +282,7 @@ export default class Scene0 {
 
     const playerImpulse = 100;
     this.camera.onCollide = (mesh) => {
-      if (mesh.name === 'physSphere') {
+      if (mesh.name.includes('phys')) {
         // we can check if mesh is in pushable collection later
         const givenVelocity = playerImpulse / mesh.physicsImpostor.mass;
         const movementDirectionVector = this.camera.position
@@ -261,6 +293,21 @@ export default class Scene0 {
         );
       }
     };
+  }
+
+  addParticles() {
+    this.shiningParticles = new ParticleSystem('shiningParticles', 2000, this.scene);
+    this.shiningParticles.particleTexture = new Texture(shineTexture, this.scene);
+    this.shiningParticles.emitRate = 20;
+    this.shiningParticles.maxLifeTime = 1;
+    this.shiningParticles.minSize = 0.1;
+    this.shiningParticles.maxSize = 2;
+    this.shiningParticles.color2 = new Color4(49.3563, 37.4926, 4.6354, 1);
+    this.shiningParticles.color1 = new Color4(49.3563, 37.4926, 4.6354, 1);
+    //this.shiningParticles.colorDead = new Color4(49.3563, 37.4926, 4.6354, 1);
+    this.shiningParticles.direction1 = new Vector3(0.3, 1, 0);
+    this.shiningParticles.direction2 = new Vector3(0.3, 1, 0);
+    this.shiningParticles.start();
   }
 
   private renderLoop(engine) {

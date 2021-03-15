@@ -24,6 +24,11 @@ interface Materials {
       StandardMaterial,
       StandardMaterial,
     ]
+  },
+  floor: {
+    forest: [
+      StandardMaterial
+    ]
   }
 }
 
@@ -54,6 +59,11 @@ export default function createMaterials(scene) {
         new StandardMaterial('trees1', scene),
         new StandardMaterial('trees2', scene),
         new StandardMaterial('trees3', scene),
+      ],
+    },
+    floor:{
+      forest: [
+        new StandardMaterial('grass', scene),
       ],
     },
   };
@@ -88,6 +98,11 @@ export default function createMaterials(scene) {
     el.emissiveColor = new Color3(1, 1, 1);
     el.disableLighting = true;
   });
+
+  // eslint-disable-next-line prefer-destructuring
+  materials.floor.forest[0].diffuseTexture = textures.floor.forest[0];
+  materials.floor.forest[0].disableLighting = true;
+  materials.floor.forest[0].emissiveColor = new Color3(1, 1, 1);
 
   return materials;
 }

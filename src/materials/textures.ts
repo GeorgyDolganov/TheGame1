@@ -22,6 +22,8 @@ import tree1 from './assets/textures/selfmade/tree1.png';
 import tree2 from './assets/textures/selfmade/tree2.png';
 import tree3 from './assets/textures/selfmade/tree3.png';
 
+import grass from './assets/textures/selfmade/grassTexture.jpg';
+
 export default function createTextures(scene) {
   let textures: {
     cobblestone: {
@@ -53,6 +55,11 @@ export default function createTextures(scene) {
         Texture,
         Texture,
         Texture,
+        Texture,
+      ]
+    },
+    floor: {
+      forest: [
         Texture,
       ]
     }
@@ -163,6 +170,17 @@ export default function createTextures(scene) {
         ),
       ],
     },
+    floor: {
+      forest: [
+        new Texture(
+          grass,
+          scene,
+          false,
+          true,
+          Texture.NEAREST_SAMPLINGMODE,
+        ),
+      ],
+    },
   };
 
   textures.dungeonset.wall1.uScale = 12.5;
@@ -182,6 +200,9 @@ export default function createTextures(scene) {
 
   textures.animations.elder.idle.uScale = 0.5;
   textures.animations.elder.idle.vScale = 0.5;
+
+  textures.floor.forest[0].uScale = 300;
+  textures.floor.forest[0].vScale = 300;
 
   return textures;
 }

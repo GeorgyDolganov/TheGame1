@@ -40,6 +40,8 @@ export class Character {
 
   private dialogueState: number = 0;
 
+  private characterState: number = 0;
+
   init(scene, image, options_?: CharOptions) {
     const options = { ...this.defaultOptions, ...options_ };
     this.mesh = MeshBuilder.CreatePlane(options.name, { size: options.size }, scene);
@@ -57,11 +59,14 @@ export class Character {
       console.log(data[id][this.dialogueState][this.dialogueCounter]);
       GUI.openDialoge(
         data[id].name,
-        this.image, data[id][this.dialogueState][this.dialogueCounter]
+        this.image, data[id][this.dialogueState][this.dialogueCounter],
       );
       this.dialogueCounter += 1;
     } else {
       GUI.closeDialogue();
+      if (Object.keys(data[id]).length - 2 > this.dialogueState) {
+        this.dialogueState += 1;
+      }
       this.dialogueCounter = 0;
     }
   }

@@ -39,10 +39,19 @@ export default GUI = {
         <p>${text}</p>
       </div>  
     </div>
-    <div class="tip">PRESS E TO CLOSE</div>`;
+    <div class="tip">PRESS Q TO CLOSE</div>
+    <div class="tip">PRESS E TO CONTINUE</div>`;
     this.GUI.dialoge.style.display = 'flex';
   },
   closeDialogue() {
     this.GUI.dialoge.style.display = 'none';
+  },
+  openInteract(text) {
+    this.GUI.interact.style.display = 'flex';
+    this.GUI.interact.innerHTML = `
+      <div class="interact-text">PRESS E TO ${text ?? 'INTERACT'}</div>`;
+  },
+  closeInteract() {
+    this.GUI.interact.style.display = 'none';
   },
 };

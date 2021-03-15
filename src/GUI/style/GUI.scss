@@ -69,5 +69,17 @@ p {
     right: 30px;
     font-family: 'Montserrat';
     font-weight: 900;
+    & ~ .tip{
+      right: 220px;
+    }
   }
+}
+.interact{
+  position: absolute;
+  font-size: 16px;
+  text-shadow: 1px 1px black;
+  top: 50%;
+  left: 46%;
+  font-family: 'Circular-Loom';
+  color: white;
 }

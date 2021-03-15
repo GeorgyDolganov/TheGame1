@@ -3,6 +3,7 @@
 import { Ray, Vector3 } from '@babylonjs/core';
 import { fromEvent } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import GUI from '../GUI';
 import multiplyQuaternionByVector from '../utils/multiplyQuaternionByVector';
 
 const distanceFromCamera = 25;
@@ -77,8 +78,12 @@ export function addPickingUpControls(scene, camera, player) {
     const hit = scene.pickWithRay(ray);
 
     if (hit.pickedMesh && hit.pickedMesh.name.includes('phys')) {
+      if (targetFPC === '' && player.holdingObject === '') {
+        GUI.openInteract('PICK UP');
+      }
       targetFPC = hit.pickedMesh.name;
     } else {
+      GUI.closeInteract();
       targetFPC = '';
     }
 
@@ -128,6 +133,7 @@ export function addPickingUpControls(scene, camera, player) {
       && player.holdingObject === ''
       && scene.getMeshByName(targetFPC).isPickable === true
     ) {
+      GUI.closeInteract();
       console.log('!');
       player.holdingObject = targetFPC;
     } else if (player.holdingObject !== '') {
@@ -147,9 +153,9 @@ export function addPickingUpControls(scene, camera, player) {
       // Function shamelessly stolen from CannonJS's Quaternion class
       const rotationVector = multiplyQuaternionByVector(cameraQuaternion, directionVector);
       pickedUpMesh.physicsImpostor._physicsBody.linearVelocity.set(
-        rotationVector.x * 5,
-        rotationVector.y * 5,
-        rotationVector.z * 5,
+        rotationVector.x * 2,
+        rotationVector.y * 2,
+        rotationVector.z * 2,
       );
       player.holdingObject = '';
     }
@@ -200,6 +206,16 @@ export function addDialogeControls(level, player) {
     if (targetFPC !== '') {
       console.log(level.characters[targetFPC]);
       level.characters[targetFPC].talkTo(targetFPC);
+    } else {
+      GUI.closeDialogue();
     }
+  });
+  const endTalk$ = fromEvent(document, 'keydown').pipe(
+    filter(
+      (ev: KeyboardEvent) => ev.key === 'Q' || ev.key === 'q' || ev.key === 'Й' || ev.key === 'й',
+    ),
+  );
+  endTalk$.subscribe(() => {
+    GUI.closeDialogue();
   });
 }
