@@ -13,9 +13,11 @@ import {
   Texture,
   StandardMaterial,
   PhysicsImpostor,
-  Color4, Effect, PostProcess, ParticleSystem, Ray,
+  Color4, ParticleSystem, Ray,
 } from '@babylonjs/core';
 import oimo from 'oimophysics';
+import { fromEvent } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import createMaterials from '../materials';
 import Elder from '../character/Elder';
 import createMesh from '../utils/createMesh';
@@ -25,13 +27,15 @@ import altarMesh from '../assets/models/altar.babylon';
 import altarTexture from '../assets/models/AltarTexture.png';
 import shineTexture from '../assets/particles/Dot.png';
 import '@babylonjs/loaders/glTF';
-import { fromEvent } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import Minion from '../minion';
+import SpatialHashGrid from '../core/SpatialHashGrid';
 
 export default class Scene0 {
   public scene: Scene;
 
   public camera: UniversalCamera;
+
+  public spatialHashGrid: SpatialHashGrid;
 
   materials: any;
 
@@ -63,6 +67,8 @@ export default class Scene0 {
 
   shiningParticles: ParticleSystem;
 
+  minions: Minion[];
+
   constructor(engine, canvas) {
     this.scene = new Scene(engine);
     this.scene.collisionsEnabled = true;
@@ -74,6 +80,8 @@ export default class Scene0 {
     this.scene.fogStart = 20.0;
     this.scene.fogEnd = 100.0;
     this.scene.fogColor = new Color3(0.20, 0.20, 0.2745);
+
+    this.spatialHashGrid = new SpatialHashGrid([1000, 1000], [1000, 1000]);
 
     this.loadAssets();
     this.createLights();
@@ -273,6 +281,18 @@ export default class Scene0 {
         },
       ),
     };
+    this.minions = [
+      new Minion(this.scene, {
+        name: 'minion1',
+        size: 5,
+        material: this.materials.sprites.monster,
+        position: {
+          y: -5,
+          x: 0,
+          z: -15,
+        },
+      }),
+    ];
   }
 
   private addPhysics() {
@@ -304,7 +324,6 @@ export default class Scene0 {
     this.shiningParticles.maxSize = 2;
     this.shiningParticles.color2 = new Color4(49.3563, 37.4926, 4.6354, 1);
     this.shiningParticles.color1 = new Color4(49.3563, 37.4926, 4.6354, 1);
-    //this.shiningParticles.colorDead = new Color4(49.3563, 37.4926, 4.6354, 1);
     this.shiningParticles.direction1 = new Vector3(0.3, 1, 0);
     this.shiningParticles.direction2 = new Vector3(0.3, 1, 0);
     this.shiningParticles.start();
