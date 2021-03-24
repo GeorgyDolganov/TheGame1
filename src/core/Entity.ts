@@ -2,7 +2,7 @@
 import { Quaternion, Vector3 } from '@babylonjs/core';
 
 export default class Entity {
-  public #name: string = '';
+  #name: string = '';
   public components: object = {};
   public position: Vector3 = new Vector3();
   public rotation: Quaternion = new Quaternion();
